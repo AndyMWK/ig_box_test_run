@@ -4,21 +4,37 @@
 #include "LoRa.h"
 #include <SPI.h>
 
-
+//Definition of constants
 #define LED_PIN PA11
 #define LoRa_ID 915E6
 
+//Definition of contant variables
 const int tries_before_quit = 10;
 const bool transmitter = true;
 
+//create display object
 ST7735_Object_t display;
 
+//function declarations
 void reset();
 
+// set up function: 
+// - set up pins
+// - intialize LoRa module
+// - initalize display
+// - MUST DO ANY KIND OF ERROR HANDLING SHOULD THERE BE AN ERROR WITH SETUP 
+//   (USE "tries_before_quit" to handle error. Program should attempt to initialize 
+//   the object by this amount)
+
 void setup() {
+
+  //Pin initialization
   pinMode(LED_PIN, OUTPUT);
+
+  //serial monitor for debugging. CHECK BAUD RATE
   Serial.begin(9600);
   
+  //LoRa initalization
   if(!LoRa.begin(LoRa_ID)) {
     Serial.println("LoRa initialization failed!");
     int iterations = 0;
@@ -32,6 +48,7 @@ void setup() {
     }
   }
 
+  //Display initialization
   if(ST7735_Init(&display, ST7735_FORMAT_RBG565, ST7735_ORIENTATION_LANDSCAPE) == ST7735_ERROR) {
     Serial.println("Display initialization failed!");
     int i = 0;
