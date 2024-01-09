@@ -8,9 +8,8 @@ There will be two ignition boxes. One will be controlled by the user with all th
 
 ## Current Progress
 The components, communication methods, and software libraries have been selected and figured out. <br>
-
 Hardware: 
 Printed Circuit Board Design has not started
 <br>
 Software: 
-Main program running on the STM32 has not been comopleted. 
+Main program running on the STM32 has not been completed. 
