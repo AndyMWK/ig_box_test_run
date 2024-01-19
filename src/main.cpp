@@ -3,15 +3,16 @@
 #include <SPI.h>
 #include "Adafruit_GFX.h"
 #include "Adafruit_ST7735.h"
+#include <string.h>
 
 //Definition of constants
 #define LED_PIN PC13
 #define LoRa_ID 915E6
 
 //these pins will change
-#define TFT_CS A8
-#define TFT_RST A9
-#define TFT_A0 A1
+#define TFT_CS PA8
+#define TFT_RST PA9
+#define TFT_A0 PA0
 
 //Definition of contant variables
 const int tries_before_quit = 10;
@@ -23,7 +24,6 @@ Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_A0, TFT_RST);
 
 //function declarations
 void reset();
-void tftPrintTest();
 
 // set up function: 
 // - set up pins
@@ -33,6 +33,8 @@ void tftPrintTest();
 //   (USE "tries_before_quit" to handle error. Program should attempt to initialize 
 //   the object by this amount)
 
+void printText(uint16_t padding, Adafruit_ST7735 &display, char msg[]);
+
 void setup() {
 
   //Pin initialization
@@ -40,10 +42,17 @@ void setup() {
 
   //serial monitor for debugging. CHECK BAUD RATE
   tft.initR(INITR_BLACKTAB);
+
+  tft.fillScreen(ST7735_WHITE);
   tft.setTextColor(ST7735_BLACK);
-  tft.setTextSize(2);
-  tft.setCursor(10, 10);
-  tft.print("Hello, STM32 Blue Pill!");
+  tft.setTextSize(1);
+  tft.setRotation(1);
+  // tft.setCursor(10, 10);
+  tft.setTextWrap(true);
+  // tft.print("Hey, STM32 BLUE PILL. Lorum Ipsum asdfas lkkdfiea LDFdifa");
+  char msg[] = "Lorem ipsum dolor sit amet, consectetur adipis elit, sed do eiusmod tempor incididunt ut labore et dolore";
+
+  printText(10, tft, msg);
   
   //LoRa initalization
   // if(!LoRa.begin(LoRa_ID)) {
@@ -92,41 +101,34 @@ void reset() {
   send_state = false;
 }
 
-void tftPrintTest() {
-  tft.setTextWrap(false);
-  tft.fillScreen(ST7735_BLACK);
-  tft.setCursor(0, 30);
-  tft.setTextColor(ST7735_RED);
-  tft.setTextSize(1);
-  tft.println("Hello World!");
-  tft.setTextColor(ST7735_YELLOW);
-  tft.setTextSize(2);
-  tft.println("Hello World!");
-  tft.setTextColor(ST7735_GREEN);
-  tft.setTextSize(3);
-  tft.println("Hello World!");
-  tft.setTextColor(ST7735_BLUE);
-  tft.setTextSize(4);
-  tft.print(1234.567);
-  delay(1500);
-  tft.setCursor(0, 0);
-  tft.fillScreen(ST7735_BLACK);
-  tft.setTextColor(ST7735_WHITE);
-  tft.setTextSize(0);
-  tft.println("Hello World!");
-  tft.setTextSize(1);
-  tft.setTextColor(ST7735_GREEN);
-  tft.print(6);
-  tft.println(" Want pi?");
-  tft.println(" ");
-  tft.print(8675309, HEX); // print 8,675,309 out in HEX!
-  tft.println(" Print HEX!");
-  tft.println(" ");
-  tft.setTextColor(ST7735_WHITE);
-  tft.println("Sketch has been");
-  tft.println("running for: ");
-  tft.setTextColor(ST7735_MAGENTA);
-  tft.print(millis() / 1000);
-  tft.setTextColor(ST7735_WHITE);
-  tft.print(" seconds.");
+void printText(uint16_t padding, Adafruit_ST7735 &display, char msg[]) {
+
+  display.setCursor(padding, padding);
+
+  
+  //one way to iterate through a string
+  size_t size_msg = strlen(msg);
+  int size = (int)size_msg;
+
+  int next_line_padding = 15;
+  int padding_vertical = padding;
+  int word_iterator  = 0;
+
+  char word[display.height()];
+  for(int i = 0; i < size; ++i) {
+
+    if(msg[i] == ' ' || msg[i] == '\n') {
+
+      if(word_iterator*6 > display.height() - padding) {
+        for(int j = 0; j < word_iterator; j++) {
+        display.print(word[j]);
+        }
+        padding_vertical += next_line_padding;
+        display.setCursor(2, padding_vertical);
+        word_iterator = 0;
+      }
+    }
+    word[word_iterator] = msg[i];
+    word_iterator++;
+  }
 }
