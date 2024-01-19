@@ -50,7 +50,7 @@ void setup() {
   // tft.setCursor(10, 10);
   tft.setTextWrap(true);
   // tft.print("Hey, STM32 BLUE PILL. Lorum Ipsum asdfas lkkdfiea LDFdifa");
-  char msg[] = "Lorem ipsum dolor sit amet, consectetur adipis elit, sed do eiusmod tempor incididunt ut labore et dolore";
+  char msg[] = "Lorem ipsum dolor sijhjfgfdt amet, consectetur adipighfds elit, sed do eiusmod tempor incididunt ut labore et dolore";
 
   printText(10, tft, msg);
   
@@ -117,17 +117,17 @@ void printText(uint16_t padding, Adafruit_ST7735 &display, char msg[]) {
   char word[display.height()];
   for(int i = 0; i < size; ++i) {
 
-    if(msg[i] == ' ' || msg[i] == '\n') {
+    // if(msg[i] == ' ' || msg[i] == '\n') {
 
       if(word_iterator*6 > display.height() - padding) {
         for(int j = 0; j < word_iterator; j++) {
         display.print(word[j]);
         }
         padding_vertical += next_line_padding;
-        display.setCursor(2, padding_vertical);
+        display.setCursor(padding, padding_vertical);
         word_iterator = 0;
       }
-    }
+    // }
     word[word_iterator] = msg[i];
     word_iterator++;
   }
