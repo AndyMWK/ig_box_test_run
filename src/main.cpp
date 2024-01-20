@@ -4,6 +4,7 @@
 #include "Adafruit_GFX.h"
 #include "Adafruit_ST7735.h"
 #include <string.h>
+#include "ubcRocketLogo.h"
 
 //Definition of constants
 #define LED_PIN PC13
@@ -47,13 +48,19 @@ void setup() {
   tft.setTextColor(ST7735_BLACK);
   tft.setTextSize(1);
   tft.setRotation(1);
-  // tft.setCursor(10, 10);
-  tft.setTextWrap(true);
-  // tft.print("Hey, STM32 BLUE PILL. Lorum Ipsum asdfas lkkdfiea LDFdifa");
-  char msg[] = "Lorem ipsum dolor sijhjfgfdt amet, consectetur adipighfds elit, sed do eiusmod tempor incididunt ut labore et dolore";
 
+  // tft.fillScreen(ST7735_WHITE);
+  tft.drawRGBBitmap(35, 10, ubcRocket, UBCROCKET_WIDTH, UBCROCKET_HEIGHT);
+
+  delay(5000);
+
+  tft.fillScreen(ST7735_WHITE);
+  tft.setTextSize(1);
+  tft.setCursor(10, 10);
+  tft.setTextWrap(true);
+  char msg[] = "Lorem ipsum dolor sijhjfgfdt amet, consectetur adipighfds elit, sed do eiusmod tempor incididunt ut labore et dolore";
   printText(10, tft, msg);
-  
+
   //LoRa initalization
   // if(!LoRa.begin(LoRa_ID)) {
   //   Serial.println("LoRa initialization failed!");
@@ -83,10 +90,10 @@ void loop() {
 
   //send state - send signal and transition to ground state
 
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(500);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(500);
+  // digitalWrite(LED_BUILTIN, HIGH);
+  // delay(500);
+  // digitalWrite(LED_BUILTIN, LOW);
+  // delay(500);
 
   
   // if(send_state) {
@@ -117,18 +124,17 @@ void printText(uint16_t padding, Adafruit_ST7735 &display, char msg[]) {
   char word[display.height()];
   for(int i = 0; i < size; ++i) {
 
-    // if(msg[i] == ' ' || msg[i] == '\n') {
-
-      if(word_iterator*6 > display.height() - padding) {
+    if(word_iterator*6 > display.height() - padding) {
         for(int j = 0; j < word_iterator; j++) {
         display.print(word[j]);
         }
         padding_vertical += next_line_padding;
         display.setCursor(padding, padding_vertical);
         word_iterator = 0;
-      }
-    // }
+    }
+
     word[word_iterator] = msg[i];
     word_iterator++;
   }
+
 }
