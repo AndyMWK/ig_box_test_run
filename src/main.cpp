@@ -14,18 +14,16 @@
 //these pins will change
 #define TFT_CS PA8
 #define TFT_RST PA9
-#define TFT_A0 PA0
+#define TFT_A0 PA10
 
 //Definition of contant variables
-const int tries_before_quit = 10;
-const bool transmitter = true;
-const bool sender = true;
+const bool sender = false;
 
 const long frequency = 433E6;
 
-const int csPin = PB3;				 // LoRa radio chip select
-const int resetPin = PB12;		 // LoRa radio reset
-const int irqPin = PA1;				// change for your board; must be a hardware interrupt pin
+const int csPin = PA4;				 // LoRa radio chip select
+const int resetPin = PA3;		 // LoRa radio reset
+const int irqPin = PB11;				// change for your board; must be a hardware interrupt pin
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_A0, TFT_RST);
 
@@ -50,25 +48,31 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
   //serial monitor for debugging. CHECK BAUD RATE
-  tft.initR(INITR_BLACKTAB);
+  if(!sender) {
+    tft.initR(INITR_BLACKTAB);
 
-  tft.fillScreen(ST7735_WHITE);
-  tft.setTextColor(ST7735_BLACK);
-  tft.setTextSize(1);
-  tft.setRotation(1);
+    tft.fillScreen(ST7735_WHITE);
+    tft.setTextColor(ST7735_BLACK);
+    tft.setTextSize(1);
+    tft.setRotation(1);
 
-  // tft.fillScreen(ST7735_WHITE);
-  tft.drawRGBBitmap(35, 10, ubcRocket, UBCROCKET_WIDTH, UBCROCKET_HEIGHT);
+    // tft.fillScreen(ST7735_WHITE);
+    tft.drawRGBBitmap(35, 10, ubcRocket, UBCROCKET_WIDTH, UBCROCKET_HEIGHT);
+    
+    delay(2500);
 
-  delay(5000);
+    tft.fillScreen(ST7735_WHITE);
+    tft.setTextSize(1);
+    tft.setCursor(10, 10);
+    tft.setTextWrap(true);
+    char msg[] = "Lorem ipsum dolor sijhjfgfdt amet, consectetur adipighfds elit, sed do eiusmod tempor incididunt ut labore et dolore";
+    printText(10, tft, msg);
 
-  tft.fillScreen(ST7735_WHITE);
-  tft.setTextSize(1);
-  tft.setCursor(10, 10);
-  tft.setTextWrap(true);
-  char msg[] = "Lorem ipsum dolor sijhjfgfdt amet, consectetur adipighfds elit, sed do eiusmod tempor incididunt ut labore et dolore";
-  printText(10, tft, msg);
-
+    delay(2500);
+  } else {
+    delay(5000);
+  }
+ 
   LoRa.setPins(csPin, resetPin, irqPin);
 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -101,23 +105,21 @@ void loop() {
 
     if(packet_size) {
       tft.fillScreen(ST7735_WHITE);
-
-      while(LoRa.available()) {
-        tft.setCursor(20, 20);
-        tft.print("Signal Received!");
-      }
+      tft.setCursor(20, 20);
+      tft.print("signal received!");
+    } else {
       tft.fillScreen(ST7735_WHITE);
       tft.drawRGBBitmap(35, 10, ubcRocket, UBCROCKET_WIDTH, UBCROCKET_HEIGHT);
     }
-    
-    delay(2000);
+    delay(1000);
   }
 
-  if(sender) {
+  else if(sender) {
     LoRa.beginPacket();
     LoRa.print("send");
     LoRa.endPacket();
-    delay(2000);
+
+    delay(100);
   }
 }
 
