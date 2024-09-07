@@ -313,7 +313,7 @@ size_t LoRaClass::write(const uint8_t *buffer, size_t size)
     size = MAX_PKT_LENGTH - currentLength;
   }
 
-  // write data
+  // write data 
   for (size_t i = 0; i < size; i++) {
     writeRegister(REG_FIFO, buffer[i]);
   }
